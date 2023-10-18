@@ -1,0 +1,8 @@
+prefix=/home/kevin/airskin_ws/devel
+
+Name: sensibility_measurements
+Description: Description of sensibility_measurements
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

@@ -1,0 +1,8 @@
+prefix=/home/kevin/airskin_ws/devel
+
+Name: rosbridge_test
+Description: Description of rosbridge_test
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

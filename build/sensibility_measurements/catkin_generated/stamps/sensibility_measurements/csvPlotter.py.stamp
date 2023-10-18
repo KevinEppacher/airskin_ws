@@ -1,0 +1,234 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#inputExcelFile ='/home/kevin/airskin_ws/src/sensibility_measurements/measurements/2023-10-03-09-06-Sensitivity-Measurement.xlsx' 
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+# Pfad zur CSV-Datei
+csv_file_name = '2023-10-04-13-56-Sensitivity-Measurement'
+csv_file_path = '/home/kevin/airskin_ws/src/sensibility_measurements/measurements/'+csv_file_name+'.csv'
+# Speichere das Foto im angegebenen Ordner
+save_path = '/home/kevin/airskin_ws/src/sensibility_measurements/measurements/Measurements_Pictures/'+csv_file_name+'.png'
+
+# CSV-Datei in ein DataFrame laden
+df = pd.read_csv(csv_file_path)
+
+# Anzahl der Diagramme
+num_plots = 15
+
+# Größe des gesamten Plots
+plt.figure(num = 1,figsize=(14, 12))
+plt.title('Force/Time Measurements')  # Set the title for Figure 1
+for i in range(num_plots):
+    # Daten filtern: Alle Werte, die gleich null sind, entfernen
+    forceData = df.iloc[1:, i * 4 + 2].values
+    forceData = forceData[forceData != 0]
+
+    timeData = df.iloc[1:].values
+
+    # Glättung der Daten mit dem Mittelwertfilter
+    window_size = 100  # Du kannst die Fenstergröße anpassen
+    movingAvgForce = pd.Series(forceData).rolling(window=window_size, min_periods=1).mean().values
+    
+
+    # Subplot hinzufügen
+    plt.subplot(5, 3, i+1)  # 5 Reihen, 3 Spalten, i+1 ist der aktuelle Subplot
+    plt.plot(range(1, len(forceData) + 1), forceData, label='Reale Werte', alpha=0.5)
+    plt.plot(range(1, len(forceData) + 1), movingAvgForce, label='Gefilterte und geglättete Daten', alpha=0.7)
+    plt.xlabel('Time [s]')
+    plt.ylabel(f'Absolute Force [N]')
+    plt.title(f'Airskin Pad {i+1}')
+
+# Save the first figure as a separate image
+save_path_fig1 = save_path.replace('.png', '_Force_Time.png')
+plt.savefig(save_path_fig1)
+# Platz zwischen den Subplots hinzufügen
+plt.tight_layout()
+
+
+
+# Größe des gesamten Plots
+plt.figure(num = 2,figsize=(12, 10))
+plt.title('Force/Distance Measurements')  # Set the title for Figure 1
+for i in range(num_plots):
+    # Daten filtern: Alle Werte, die gleich null sind, entfernen
+    forceData = df.iloc[1:, i * 4 + 2].values
+    forceData = forceData[forceData != 0]
+
+    distanceData = (df.iloc[1: ,i * 4 + 4].values)*1000
+    #distanceData = distanceData[-0.02 < distanceData > 0.02]
+
+    # Glättung der Daten mit dem Mittelwertfilter
+    window_size = 100  # Du kannst die Fenstergröße anpassen
+    movingAvgForce = pd.Series(forceData).rolling(window=window_size, min_periods=1).mean().values
+
+    # Find the minimum length between distanceData and forceData
+    min_length = min(len(distanceData), len(forceData))
+
+    # Trim both arrays to the minimum length
+    distanceData = distanceData[:min_length]
+    movingAvgDistance = pd.Series(distanceData).rolling(window=window_size, min_periods=1).mean().values
+    forceData = forceData[:min_length]
+    movingAvgForce = movingAvgForce[:min_length]
+
+    # Subplot hinzufügen
+    plt.subplot(5, 3, i+1)  # 5 Reihen, 3 Spalten, i+1 ist der aktuelle Subplot
+    plt.plot(movingAvgDistance, forceData, label='Reale Werte', alpha=0.5)
+    plt.plot(movingAvgDistance, movingAvgForce, label='Gefilterte und geglättete Daten', alpha=0.7)
+    plt.xlabel('Distance [mm]')
+    plt.ylabel(f'Absolute Force [N]')
+    plt.title(f'Airskin Pad {i+1}')
+
+# Save the first figure as a separate image
+save_path_fig1 = save_path.replace('.png', '_Force_Distance.png')
+plt.savefig(save_path_fig1)
+
+# Platz zwischen den Subplots hinzufügen
+plt.tight_layout()
+
+plt.savefig(save_path)
+
+# Den gesamten Plot anzeigen
+plt.show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+import pandas as pd
+import matplotlib.pyplot as plt
+
+class ExcelPlotter:
+    def __init__(self, file_path):
+        self.file_path = file_path
+
+    def plot_column(self, column_name):
+        df = pd.read_excel(self.file_path, skiprows=[0])  # Überspringe die erste Zeile
+        # Einträge pro Zeile ausgeben
+        for index, row in df.iterrows():
+            print(f"Zeile {index + 1}: {row}")
+
+
+
+if __name__ == "__main__":
+    file_path = "/home/kevin/airskin_ws/src/sensibility_measurements/measurements/2023-10-02-16-50-Sensitivity-Measurement.xlsx"
+    excel_plotter = ExcelPlotter(file_path)
+    
+    column_name = "Absolute Force [N]"  # Ersetze mit dem Namen der gewünschten Spalte
+    excel_plotter.plot_column(column_name)
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""
+
+import matplotlib.pyplot as plt
+import csv
+from datetime import datetime
+
+class DataPlotter:
+    def __init__(self, csv_file_path, sampling_frequency=10000, window_size=20):
+        self.csv_file_path = csv_file_path
+        self.sampling_frequency = sampling_frequency
+        self.window_size = window_size
+
+    def read_csv_data(self):
+        padNum = []
+        absoluteForce = []
+        timeData = []
+
+        with open(self.csv_file_path) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=",")
+            next(csv_reader)  # Überspringe die erste Zeile
+            for row in csv_reader:
+                padNum.append(float(row[0]))
+                absoluteForce.append(float(row[2]))
+                time_str = row[0]
+                time_obj = datetime.strptime(time_str, '%H:%M:%S')
+                timeData.append(time_obj.strftime('%H:%M:%S'))
+
+        start_time = datetime.strptime("00:00:00", '%H:%M:%S')
+        timeDataInSeconds = [(datetime.strptime(time_str, '%H:%M:%S') - start_time).total_seconds() for time_str in timeData]
+        timeDataX = [t / self.sampling_frequency for t in range(len(timeDataInSeconds))]
+
+        return timeDataX, absoluteForce
+
+    def moving_average(self, data):
+        moving_avg = []
+        for i in range(len(data)):
+            start = max(0, i - self.window_size + 1)
+            end = i + 1
+            avg = sum(data[start:end]) / len(data[start:end])
+            moving_avg.append(avg)
+        return moving_avg
+
+    def plot_data(self):
+        timeDataX, absoluteForce = self.read_csv_data()
+        smoothed_data = self.moving_average(absoluteForce)
+
+        plt.plot(timeDataX, absoluteForce[:len(timeDataX)], linestyle='-', label='Ground Truth')
+        plt.plot(timeDataX, smoothed_data, linestyle='-', label='Smoothed Data')
+
+        plt.title('Force (Smoothed) vs Ground Truth')
+        plt.xlabel('time [s]')
+        plt.ylabel('N')
+        plt.legend()
+        plt.grid()
+        plt.show()
+
+if __name__ == "__main__":
+    csv_file_path = "/home/kevin/airskin_ws/src/sensibility_measurements/measurements/2023-09-27-17-22.csv"
+    plotter = DataPlotter(csv_file_path)
+    plotter.plot_data()
+
+"""
