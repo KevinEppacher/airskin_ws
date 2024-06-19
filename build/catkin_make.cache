@@ -1,2 +1,2 @@
-rosbridge_test:sensibility_measurements
+sensibility_measurements
 -DCATKIN_DEVEL_PREFIX=/home/kevin/airskin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/kevin/airskin_ws/install -G Unix Makefiles

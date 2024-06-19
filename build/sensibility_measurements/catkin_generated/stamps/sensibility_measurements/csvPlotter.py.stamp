@@ -6,14 +6,14 @@ import matplotlib.pyplot as plt
 
 
 # Pfad zur CSV-Datei
-csv_file_name = '2023-10-04-13-56-Sensitivity-Measurement'
+csv_file_name = '2023-12-13-15-06-Sensitivity-Measurement'
+print(csv_file_name)
 csv_file_path = '/home/kevin/airskin_ws/src/sensibility_measurements/measurements/'+csv_file_name+'.csv'
 # Speichere das Foto im angegebenen Ordner
-save_path = '/home/kevin/airskin_ws/src/sensibility_measurements/measurements/Measurements_Pictures/'+csv_file_name+'.png'
+save_path = '/home/kevin/airskin_ws/src/sensibility_measurements/measurements/Measurements_Results/'+csv_file_name+'.png'
 
 # CSV-Datei in ein DataFrame laden
-df = pd.read_csv(csv_file_path)
-
+df = pd.read_csv(csv_file_path, on_bad_lines='skip')
 # Anzahl der Diagramme
 num_plots = 15
 
@@ -28,7 +28,7 @@ for i in range(num_plots):
     timeData = df.iloc[1:].values
 
     # Glättung der Daten mit dem Mittelwertfilter
-    window_size = 100  # Du kannst die Fenstergröße anpassen
+    window_size = 1000  # Du kannst die Fenstergröße anpassen
     movingAvgForce = pd.Series(forceData).rolling(window=window_size, min_periods=1).mean().values
     
 
@@ -40,11 +40,11 @@ for i in range(num_plots):
     plt.ylabel(f'Absolute Force [N]')
     plt.title(f'Airskin Pad {i+1}')
 
+# Platz zwischen den Subplots hinzufügen
+plt.tight_layout()
 # Save the first figure as a separate image
 save_path_fig1 = save_path.replace('.png', '_Force_Time.png')
 plt.savefig(save_path_fig1)
-# Platz zwischen den Subplots hinzufügen
-plt.tight_layout()
 
 
 
@@ -60,7 +60,7 @@ for i in range(num_plots):
     #distanceData = distanceData[-0.02 < distanceData > 0.02]
 
     # Glättung der Daten mit dem Mittelwertfilter
-    window_size = 100  # Du kannst die Fenstergröße anpassen
+    window_size = 1000  # Du kannst die Fenstergröße anpassen
     movingAvgForce = pd.Series(forceData).rolling(window=window_size, min_periods=1).mean().values
 
     # Find the minimum length between distanceData and forceData
@@ -82,10 +82,10 @@ for i in range(num_plots):
 
 # Save the first figure as a separate image
 save_path_fig1 = save_path.replace('.png', '_Force_Distance.png')
+plt.tight_layout()
 plt.savefig(save_path_fig1)
 
 # Platz zwischen den Subplots hinzufügen
-plt.tight_layout()
 
 plt.savefig(save_path)
 
